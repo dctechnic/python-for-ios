@@ -9,7 +9,9 @@ try () {
 # iOS SDK Environmnent
 export SDKVER=`xcodebuild -showsdks | fgrep "iphoneos" | tail -n 1 | awk '{print $2}'`
 export DEVROOT=`xcode-select -print-path`/Platforms/iPhoneOS.platform/Developer
+export DEVROOT_SIMULATOR=`xcode-select -print-path`/Platforms/iPhoneSimulator.platform/Developer
 export SDKROOT=$DEVROOT/SDKs/iPhoneOS$SDKVER.sdk
+export SDKROOT_SIMULATOR=$DEVROOT_SIMULATOR/SDKs/iPhoneSimulator$SDKVER.sdk
 
 if [ ! -d $DEVROOT ]; then
 	echo "Unable to find the Xcode iPhoneOS.platform"
