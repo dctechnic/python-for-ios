@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+# set -x
 
 try () {
 	"$@" || exit -1
@@ -34,6 +34,7 @@ export KIVYIOSROOT="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 export BUILDROOT="$KIVYIOSROOT/build"
 export TMPROOT="$KIVYIOSROOT/tmp"
 export CACHEROOT="$KIVYIOSROOT/.cache"
+export LOG="$BUILDROOT/build_log.txt"
 
 # some tools
 export CCACHE=$(which ccache)

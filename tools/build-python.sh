@@ -11,6 +11,8 @@ if [ ! -f $CACHEROOT/Python-$PYTHON_VERSION.tar.bz2 ]; then
     curl http://www.python.org/ftp/python/$PYTHON_VERSION/Python-$PYTHON_VERSION.tar.bz2 > $CACHEROOT/Python-$PYTHON_VERSION.tar.bz2
 fi
 
+echo "extracting"
+
 # get rid of old build
 rm -rf $TMPROOT/Python-$PYTHON_VERSION
 try tar -xjf $CACHEROOT/Python-$PYTHON_VERSION.tar.bz2
@@ -25,16 +27,17 @@ try patch -p1 < $KIVYIOSROOT/src/python_files/Python-$PYTHON_VERSION-dynload.pat
 try cp $KIVYIOSROOT/src/python_files/ModulesSetup Modules/Setup.local
 
 
-echo "Building for native machine ============================================"
+echo "building for native machine ============================================"
+echo "follow build log with 'tail -f ${LOG}'"
 
-try ./configure CC="$CCACHE clang -Qunused-arguments -fcolor-diagnostics"
-try make python.exe Parser/pgen
+try ./configure CC="$CCACHE clang -Qunused-arguments -fcolor-diagnostics" >> "${LOG}" 2>&1
+try make python.exe Parser/pgen >> "${LOG}" 2>&1
 try mv python.exe hostpython
 try mv Parser/pgen Parser/hostpgen
-try make distclean
+try make distclean >> "${LOG}" 2>&1
 
 
-echo "Building for iOS ======================================================="
+echo "building for iOS ======================================================="
 
 # patch python to cross-compile
 try patch -p1 < $KIVYIOSROOT/src/python_files/Python-$PYTHON_VERSION-xcompile.patch
@@ -56,13 +59,15 @@ try ./configure CC="$ARM_CC" LD="$ARM_LD" \
 	--disable-toolbox-glue \
 	--host=armv7-apple-darwin \
 	--prefix=/python \
-    --without-doc-strings
+	--without-doc-strings >> "${LOG}" 2>&1
 
 try make HOSTPYTHON=./hostpython HOSTPGEN=./Parser/hostpgen \
-     CROSS_COMPILE_TARGET=yes
+     CROSS_COMPILE_TARGET=yes >> "${LOG}" 2>&1
 
-try make install HOSTPYTHON=./hostpython CROSS_COMPILE_TARGET=yes prefix="$BUILDROOT/python"
+try make install HOSTPYTHON=./hostpython CROSS_COMPILE_TARGET=yes prefix="$BUILDROOT/python" >> "${LOG}" 2>&1
 
 try mv -f $BUILDROOT/python/lib/libpython2.7.a $BUILDROOT/lib/
 
 deduplicate $BUILDROOT/lib/libpython2.7.a
+
+echo "done. your static library is at lib/libpython2.7.a
