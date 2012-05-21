@@ -12,7 +12,7 @@ export DEVROOT=`xcode-select -print-path`/Platforms/iPhoneOS.platform/Developer
 export SDKROOT=$DEVROOT/SDKs/iPhoneOS$SDKVER.sdk
 
 if [ ! -d $DEVROOT ]; then
-	echo "Unable to found the Xcode iPhoneOS.platform"
+	echo "Unable to find the Xcode iPhoneOS.platform"
 	echo
 	echo "The path is automatically set from 'xcode-select -print-path'"
 	echo " + /Platforms/iPhoneOS.platform/Developer"
